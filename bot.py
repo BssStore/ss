@@ -70,6 +70,7 @@ def attack_cfb(url, end_time):
             continue
 
 def attack_udp(ip, port, end_time, size):
+    print("attack started")
     max_packets = detect_max_packets()
     
     while time.time() < end_time:
