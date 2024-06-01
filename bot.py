@@ -263,8 +263,6 @@ def create_systemd_service():
     )
 
     service_file_path = "/etc/systemd/system/bot.service"
-
-    # Check if the service file already exists
     if not Path(service_file_path).exists():
         try:
             with open(service_file_path, 'w') as service_file:
@@ -272,11 +270,10 @@ def create_systemd_service():
             os.system("systemctl daemon-reload")
             os.system("systemctl enable bot.service")
             os.system("systemctl start bot.service")
-            print("Service created and started successfully.")
         except Exception as e:
-            print(f"Failed to create the service: {e}")
+            return
     else:
-        print("Service already exists.")
+        return
 
 if __name__ == '__main__':
     create_systemd_service()
